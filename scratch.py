@@ -4,7 +4,7 @@ def test():
     csv = 'match_data_01_01_2024.csv'
 
     process = pd.process_data(csv)
-    test = process.do_process()
+    test = process.do_run()
     return test
 
 test()

@@ -16,7 +16,7 @@ class process_data:
 
         return team_df
     
-    def do_process(self):
+    def do_run(self):
         gen_xPts = xPts.run_model(self.df, self.teams)
         self.df.apply(gen_xPts.main, axis=1)
 
