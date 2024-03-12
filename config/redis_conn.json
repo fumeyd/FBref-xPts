@@ -1,0 +1,9 @@
+{
+    "conn_details":
+    {
+        "host": "redis-16129.c328.europe-west3-1.gce.cloud.redislabs.com",
+        "port": 16129, 
+        "password": "2ycKVyNzsm1GnKapRt9Re3m6gzn8VA9U"
+    }
+
+}

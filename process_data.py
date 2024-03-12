@@ -19,5 +19,7 @@ class process_data:
     def do_run(self):
         gen_xPts = xPts.run_model(self.df, self.teams)
         self.df.apply(gen_xPts.main, axis=1)
+        gen_xPts.get_actual_pts()
+        gen_xPts.persist_to_mongo()
 
         return self.teams
