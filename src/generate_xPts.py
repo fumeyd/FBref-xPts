@@ -53,7 +53,7 @@ class run_model:
     
     def get_actual_pts(self):
         if not self.actual_pts:
-            with open("league_table_14_02_24.csv", encoding='utf-8-sig') as csv_file:
+            with open("raw_data/league_table_14_02_24.csv", encoding='utf-8-sig') as csv_file:
                 data = csv.reader(csv_file)
                 points = {}
                 for row in data:

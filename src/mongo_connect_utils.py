@@ -40,7 +40,7 @@ class mongoConnect:
     def createInitDict(self):
         teams = []
 
-        teams_file = open("teams.csv", "r").read().splitlines()
+        teams_file = open("raw_data/teams.csv", "r").read().splitlines()
         for team in teams_file:
             team_dict = {}
             
