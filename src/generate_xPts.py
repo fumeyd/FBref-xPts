@@ -10,19 +10,38 @@ class run_model:
         self.mongo_client = None
         self.redis_client = None
         self.mconn = None
+        self.rconn = None
         self.actual_pts = None
+        self.curr_gw = None
+
+        self.init_connections()
 
     def init_connections(self):
-        self.mconn = mcu.mongoConnect()
-        self.mconn.startConnection()
+        self.start_mongo_connection()
+        self.start_redis_connection()
 
-        rconn = rcu.redisConnect()
-        rconn.startConnection()
-
-        self.mongo_client = self.mconn.client
-        self.redis_client = rconn.client
+        self.get_curr_gw()
+        self.fill_team_df()
 
         return
+    
+    def start_redis_connection(self):
+        self.rconn = rcu.redisConnect()
+        self.rconn.startConnection()
+        self.redis_client = self.rconn.client
+
+    def start_mongo_connection(self):
+        self.mconn = mcu.mongoConnect()
+        self.mconn.startConnection()
+        self.mongo_client = self.mconn.client
+    
+    def get_curr_gw(self):
+        self.curr_gw = self.mconn.get_last_gameweek()
+        self.mongo_client.close()
+
+    def fill_team_df(self):
+        self.team_df = self.rconn.getAll()
+        self.redis_client.close()
 
     def sim_match(self, xg_for, xg_against):
         if np.isnan(xg_for) or np.isnan(xg_against):
@@ -39,8 +58,6 @@ class run_model:
             return 1
 
     def add_xPts(self, xPts, team):
-        # if not self.redis_client:
-        #     self.init_connections()
         if team == 'nan':
             return 
         
@@ -50,7 +67,7 @@ class run_model:
             self.team_df[team] = xPts
 
         return
-    
+
     def get_actual_pts(self):
         if not self.actual_pts:
             with open("raw_data/league_table_14_02_24.csv", encoding='utf-8-sig') as csv_file:
@@ -63,21 +80,48 @@ class run_model:
         return
 
     def persist_to_mongo(self):
-        if not self.mongo_client:
-            self.init_connections()
+        self.start_mongo_connection()
 
         for team in self.team_df:
-            if team == 'nan' or type(team) is not str:
+            if team == 'nan' or type(team) != str:
                 continue
             
             query = {"team" : team}
-            self.mconn.mongoUpdate(query, {"xPts" : self.team_df[team]})
-            self.mconn.mongoUpdate(query, {"Pts" : int(self.actual_pts[team])})
+            xPts_update = self.mconn.mongoUpdate(query, {"xPts" : self.team_df[team]})
+            if type(xPts_update) == Exception:
+                return xPts_update
+            
+            pts_update = self.mconn.mongoUpdate(query, {"Pts" : int(self.actual_pts[team])})
+            if type(pts_update) == Exception:
+                return pts_update
         
+        last_gw_update = self.mconn.set_last_gameweek({"tag" : "latest_gw"}, {"gameweek" : self.curr_gw})
+        if type(last_gw_update) == Exception:
+            return last_gw_update
+
+        self.mongo_client.close()
+
         return
+    
+    def persist_to_redis(self):
+        self.start_redis_connection()
+
+        self.rconn.put(self.team_df)
+
+        self.redis_client.close()
+
+    def persist_data(self): 
+        try:
+            self.persist_to_mongo()
+        finally:
+            self.persist_to_redis()
+
         
     def main(self, row, simulations=10000):
-        ## sim for home team
+        ## sim for home team       
+        if np.isnan(row.Wk) or int(row.Wk) < self.curr_gw:
+            return
+        
         home_total = 0
         for i in range(simulations):
             home_sim = self.sim_match(row.xG_home, row.xG_away)
@@ -100,5 +144,6 @@ class run_model:
         away_team = row.Away
 
         self.add_xPts(away_xPts, away_team)
+        self.curr_gw = max(self.curr_gw, row.Wk)
 
         return 

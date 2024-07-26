@@ -50,10 +50,15 @@ class redisConnect:
         )
 
         return 
-        # return len(dict) == res
     
     def get(self, key):
-        return self.client.hget("xPts", key)
+        query_result = self.client.hget("xPts", key)
+        decoded = {k.decode('utf8'): float(v.decode('utf8')) for k, v in query_result.items()}
+        
+        return decoded
 
     def getAll(self):
-        return self.client.hgetall("xPts")
+        query_result = self.client.hgetall("xPts")
+        decoded = {k.decode('utf8'): float(v.decode('utf8')) for k, v in query_result.items()}
+
+        return decoded
