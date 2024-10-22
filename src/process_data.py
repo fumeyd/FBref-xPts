@@ -21,7 +21,5 @@ class process_data:
         self.df.apply(gen_xPts.main, axis=1)
         gen_xPts.get_actual_pts()
         gen_xPts.persist_data()
-        # gen_xPts.persist_to_mongo()
-        # gen_xPts.persist_to_redis()
 
         return self.teams

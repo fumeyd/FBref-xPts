@@ -7,6 +7,7 @@ class redisConnect:
         self.host = None
         self.password = None
         self.port = None
+        self.key = "xPts_24-25"
 
     def getConnDetails(self, file):
         details_file = open(file)
@@ -45,20 +46,20 @@ class redisConnect:
     
     def put(self, dict):
         res = self.client.hset(
-            "xPts", 
+            self.key, 
             mapping=dict
         )
 
         return 
     
-    def get(self, key):
-        query_result = self.client.hget("xPts", key)
+    def get(self, hash_key):
+        query_result = self.client.hget(self.key, hash_key)
         decoded = {k.decode('utf8'): float(v.decode('utf8')) for k, v in query_result.items()}
         
         return decoded
 
     def getAll(self):
-        query_result = self.client.hgetall("xPts")
+        query_result = self.client.hgetall(self.key) 
         decoded = {k.decode('utf8'): float(v.decode('utf8')) for k, v in query_result.items()}
 
         return decoded

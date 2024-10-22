@@ -17,7 +17,7 @@ class mongoConnect:
         self.client = MongoClient(uri, server_api=ServerApi('1'))
         self.testConnection()
 
-        self.db = self.client["teams-xPts-0"]
+        self.db = self.client["xPts-24-25"]
         self.collection = self.db["xPts"]
         self.gameweek_watermark = self.db["gameweek_watermark"]
 

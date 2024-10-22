@@ -5,16 +5,16 @@ import csv
 import math 
 
 def main():
-    mongo_conn = mc.mongoConnect()
-    mongo_conn.startConnection()
+    # mongo_conn = mc.mongoConnect()
+    # mongo_conn.startConnection()
 
-    mongo_conn.set_last_gameweek({"tag" : "latest_gw"}, {"gameweek" : 28})
-    # redis_conn = rc.redisConnect()
-    # redis_conn.startConnection()
+    # mongo_conn.set_last_gameweek({"tag" : "latest_gw"}, {"gameweek" : 28})
+    redis_conn = rc.redisConnect()
+    redis_conn.startConnection()
 
-    # x = redis_conn.getAll()
-    # unidict = {k.decode('utf8'): float(v.decode('utf8')) for k, v in x.items()}
-    # print(x)
+    x = redis_conn.getAll()
+    unidict = {k.decode('utf8'): float(v.decode('utf8')) for k, v in x.items()}
+    print(x)
 
     # print(mongo_conn.get_last_gameweek())
     # client = mongo_conn.client
