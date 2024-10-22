@@ -8,12 +8,13 @@ Expected Points (xPts), as it says on the tin, are the points a team is expected
 Now, what xPts aims to do is take the xG in a match and simulate that match (say about 10000 times) and return an average of points each team is expected to have gotten from that performance (0 being a loss, 1 being a draw and 3 being a win). Because the football gods (luck or a lack thereof) could decide to intervene once in a while, it's incredibly rare to see an absolute result of 3 or 0. This "act of the gods" encourages us to use Poisson distribution (https://en.wikipedia.org/wiki/Poisson_distribution) to simulate each of these 10000 matches. The TLDR of this is essentially; **"If I played this match the same way 10000 times, how many times would I have come out with the 3 points?"**
 
 ## What Tech Did You Use? 
-The application was written in Python. The Pandas and NumPy python modules tend to naturally align towards this type of work. The data is stored on a MongoDB Atlas cluster which also allows me to visualise the data. Some of the visualisations aren't the most clear, however, and so I'm looking at other ways of creating them with a bit more granularity. There is also ongoing work to use Redis' hash data type as an In-Memory Database in future work. 
+The application was written in Python. The Pandas and NumPy python frameworks tend to naturally align towards this type of work. The data is stored on a MongoDB Atlas cluster which also allows me to visualise the data. Some of the visualisations aren't the most clear, however, and so I'm looking at other ways of creating them with a bit more granularity. We've also added a redis hash to allow us to hold onto already processed data to reduce the number of simulations we need to run from week to week.
 
 ## What Work is Currently Ongoing on this Project? 
 - As mentioned earlier, more advanced ways to visualise the data to improve clarity. 
-- Introduce a Redis hash to improve continuity.
-- This runs 10000 for every match in a 38-game season. It would be irresponsible not to try and optimise what I can and improve performances and scalability significantly. I'm particularly looking into how I could leverage MongoDB's mapreduce to make the work faster. 
+- This runs 10000 for every match in a 38-game season. It would be irresponsible not to try and optimise what I can and improve performances and scalability significantly. I'm particularly looking into how I could leverage MongoDB's mapreduce to make the work faster.
+- I'd like to add data scraping as a functionality to reduce manual input
+- I have been playing around with the idea of creating a dashboard for viewing most/all the visualisations in one place
 
 ## Final Thoughts
 This is a new field I'm stepping, and one I really enjoy working in. It's an opportunity to share some of the stuff I like to do and also extend some of the things I'm actively learning into a project I don't mind sinking time into. That being said, I'm absolutely open to any feedback that would allow me to improve this project, the presentation of it or the the coding skills that went into programming it. I'm also open to any enhancements anyone could perform on the project. If there's a need to contact me, please do so on delasie29@gmail.com. Enjoy!
